@@ -9,6 +9,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from ultralytics import YOLO
+from dotenv import load_dotenv
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -17,11 +18,21 @@ templates = Jinja2Templates(directory="templates")
 print("Memuat model YOLO...")
 model = YOLO('best.pt') 
 
-# --- Konfigurasi Server Laravel ---
-LARAVEL_HOST = "http://10.28.144.94:8000"
+# =======================================================
+# KONFIGURASI SERVER DARI .ENV
+# =======================================================
+# Muat variabel dari file .env
+load_dotenv()
+
+# Ambil data dari .env. 
+# Jika file .env tidak ditemukan, ia akan memakai fallback (opsional untuk keamanan)
+LARAVEL_HOST = os.getenv("LARAVEL_HOST", "http://127.0.0.1:8000")
+MACHINE_TOKEN = os.getenv("MACHINE_TOKEN", "token-default")
+
 API_FISH_COUNT = f"{LARAVEL_HOST}/api/machine/fish-count"
 API_CHECK_COMMAND = f"{LARAVEL_HOST}/api/machine/check-command"
-MACHINE_TOKEN = "token-rahasia-mesin-123"
+
+print(f"Terhubung ke Backend: {LARAVEL_HOST}")
 
 # --- Variabel Kontrol ---
 last_report_time = 0

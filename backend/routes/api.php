@@ -162,8 +162,13 @@ Route::prefix('device')->group(function () {
             return ['h' => (int) $parts[0], 'm' => (int) $parts[1]];
         });
 
+        // 3. AMBIL DATA JUMLAH IKAN TERAKHIR (TAMBAHAN BARU)
+        $latestLog = DB::table('fish_logs')->orderBy('created_at', 'desc')->first();
+        $fishCount = $latestLog ? $latestLog->count : 1; // Default 1 jika belum ada data kamera
+
         return response()->json([
             'feed_now' => $feedNow,
+            'fish_count' => (int) $fishCount, // Kirim ke ESP32
             'schedules' => $formattedSchedules
         ]);
     });
